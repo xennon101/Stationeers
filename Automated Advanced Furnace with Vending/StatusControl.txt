@@ -1,0 +1,58 @@
+alias light d0
+alias control d1
+alias typeDial d2
+alias quantityDial d3
+alias quantityDisplay d4
+alias currentStatus r0
+alias type r1
+alias quantity r2
+alias totalQuantity r3
+alias multiplier r4
+
+s light On 1
+s light Lock 1
+
+start:
+l currentStatus control Setting
+beq currentStatus -1 red
+beqz currentStatus green
+
+yellow:
+s light Color 5
+j quantityDisplay
+
+red:
+s light Color 4
+j quantityDisplay
+
+green:
+s light Color 2
+
+quantityDisplay:
+l type typeDial Setting
+l quantity quantityDial Setting
+
+move multiplier 50
+
+bgt type 11 steel
+bgt type 7 alloy
+
+j multiply
+
+alloy:
+move multiplier 100
+j multiply
+
+steel:
+move multiplier 200
+
+multiply:
+mul totalQuantity quantity multiplier
+
+brgtz type 2
+move totalQuantity 0
+
+s quantityDisplay Setting totalQuantity
+
+yield
+j start

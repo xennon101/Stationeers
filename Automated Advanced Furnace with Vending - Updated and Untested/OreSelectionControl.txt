@@ -1,0 +1,128 @@
+alias expectedExport r0 #d0 mainControl
+alias exportCount r13 #d1 typeMem
+alias type r11 #d2 quantityDial
+alias quantity r12 #d3 Vending
+move r1 -707307845 
+move r2 -1348105509 
+move r3 1758427767 
+move r4 -190236170 
+move r5 1830218956 
+move r6 1103972403 
+move r7 -916518678 
+move r8 1724793494 
+move r9 -1516581844 
+move r10 -983091249 
+waitActive:
+yield
+s d3 ClearMemory 1
+l type d0 Setting
+l quantity d2 Setting
+ble type 0 waitActive #Select ore when provide type
+mul expectedExport 2 quantity
+beq type 8 constantan #choose alloy or normal ore
+beq type 9 electrum
+beq type 10 invar
+beq type 11 solder
+mul expectedExport 4 quantity
+beq type 12 steel
+beq type 13 astroloy
+beq type 14 hastelloy
+beq type 15 inconel
+beq type 16 stellite
+beq type 17 waspaloy
+move expectedExport quantity 
+push type
+push quantity
+j startOre
+constantan: #All alloy push combo of ores to stack
+push 1
+push quantity
+push 5
+push quantity
+j startOre
+electrum:
+push 7
+push quantity
+push 2
+push quantity
+j startOre
+invar:
+push 3
+push quantity
+push 5
+push quantity
+j startOre
+solder:
+push 4
+push quantity
+push 3
+push quantity
+j startOre
+steel:
+push 8
+push quantity
+mul quantity 3 quantity
+push 3
+push quantity
+j startOre
+astroloy:
+push 1
+push quantity
+push 10
+push quantity
+mul quantity 2 quantity
+push 3
+push quantity
+j startOre
+hastelloy:
+push 7
+push quantity
+push 10
+push quantity
+mul quantity 2 quantity
+push 5
+push quantity
+j startOre
+inconel:
+push 3
+push quantity
+push 2
+push quantity
+mul quantity 2 quantity
+push 5
+push quantity
+j startOre
+stellite:
+push 7
+push quantity
+push 6
+push quantity
+mul quantity 2 quantity
+push 10
+push quantity
+j startOre
+waspaloy:
+push 7
+push quantity
+push 4
+push quantity
+mul quantity 2 quantity
+push 5
+push quantity
+startOre:
+pop quantity #Pop the current ore off the stack
+pop type
+waitOre:
+s d3 RequestHash rr11
+sleep 2
+yield
+sub quantity quantity 1
+bgt quantity 0 waitOre
+bgt sp 0 startOre #Loop back if still stack
+l exportCount d3 ExportCount 
+brgt exportCount expectedExport 2
+s d1 Setting 50 #End signal
+breq exportCount expectedExport 2
+s d1 Setting -1
+yield
+j waitActive

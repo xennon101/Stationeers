@@ -1,0 +1,37 @@
+1 = Copper
+2 = Gold
+3 = Iron
+4 = Lead
+5 = Nickel
+6 = Silicon
+7 = Silver
+8 = Constantan
+9 = Electrum
+10 = Invar
+11 = Solder
+12 = Steel
+13 = Astroloy
+14 = Hastelloy
+15 = Inconel
+16 = Stellite
+17 = Waspaloy
+
+Astroloy = 100 iron, 50 copper, 50 cobalt
+Hastelloy = 50 silver, 100 nickel, 50 cobalt
+Inconel = 50 iron, 50 gold, 100 nickel
+Stellite = 50 silver, 50 silicon, 100 cobalt
+Waspaloy = 50 silver, 100 nickel, 50 lead
+
+		Pressure	Temp
+Standard =   100 -100000    600 -100000
+Constantan = 100 -100000    1000-1500
+Electrum =   800 -2400      700 -10000
+Invar =      6000-7000      1200-2000
+Solder =     300 -3500      300 -2000
+Steel =      100 -100000    600 -100000
+
+Astroloy =   5000-6000      1200-1400
+Hastelloy =  2500-3000      950 -1000
+Inconel =    4250-4750      1200-1300
+Stellite =   4000-5000      1700-1900
+Waspaloy =   1250-2750      875 -1000

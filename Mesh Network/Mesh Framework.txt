@@ -1,0 +1,103 @@
+alias index r0
+alias temp r1
+alias temp2 r2
+alias response r3
+alias messageID r4
+alias functionID r5
+alias messageContent r6
+alias sp2 r7
+alias spStore r8
+alias nodes r9
+define functionID1 10
+move sp2 256
+move index -1
+jal countNodes
+waitMessage:
+s db Setting 1000
+yield
+l temp db Setting
+beq temp 1000 sendMessage
+push temp
+s db Setting 1001
+move temp 1001
+jal loadNext
+jal loadNext
+sendMessage:
+s db Setting 1002
+move index 0
+beqz sp standardCode
+pop messageContent
+pop functionID
+pop messageID
+move spStore sp
+jal checkStack
+move sp spStore
+beq temp 99999 standardCode
+move spStore sp
+move sp sp2
+brne messageID 0 3
+rand messageID
+push messageID
+jal addCopies
+move sp2 sp
+move sp spStore
+loopDevices:
+brdns dr0 15
+l temp dr0 PrefabHash
+brne temp -128473777 13
+yield
+l temp dr0 Setting
+brne temp 1000 -2
+s dr0 Setting messageID
+waitResponse:
+yield
+l response dr0 Setting
+bne response 1001 waitResponse
+s dr0 Setting functionID
+yield
+yield
+s dr0 Setting messageContent
+add index index 1
+blt index 6 loopDevices
+beq functionID functionID1 runFunctionOne
+j standardCode
+runFunctionOne:
+j standardCode
+standardCode:
+j waitMessage
+checkStack:
+move sp sp2
+loopStack:
+pop temp2
+beqz temp2 ra
+bne temp2 messageID loopStack
+move temp 99999
+condenseStack:
+push 0
+add sp sp 1
+pop temp2
+beqz temp2 ra
+sub sp sp 1
+push temp2
+j condenseStack
+loadNext:
+move temp2 temp
+yield
+l temp db Setting
+breq temp temp2 -2
+push temp
+j ra
+countNodes:
+add index index 1
+beq index 6 ra
+brdns dr0 -2
+l temp dr0 PrefabHash
+brne temp -128473777 -4
+add nodes nodes 1
+j countNodes
+addCopies:
+move temp nodes
+sub temp temp 1
+beqz temp ra
+push messageID
+brnez temp -3

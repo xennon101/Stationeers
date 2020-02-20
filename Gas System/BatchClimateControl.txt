@@ -1,0 +1,75 @@
+https://stationeering.com/tools/ic/_Hq3GgU5463
+
+alias gasSensor d0
+alias heater d1
+alias cooler d2
+alias inflow d3
+alias outflow d4
+
+alias currentTemp r0
+alias currentPressure r1
+alias targetTemp r2
+alias targetPressure r3
+alias minTemp r4
+alias maxTemp r5
+alias inflowPressure r6
+alias outflowPressure r7
+
+move targetTemp 310
+move targetPressure 110
+
+sub outflowPressure targetPressure 1
+add inflowPressure targetPressure 1
+
+sub minTemp targetTemp 2
+add maxTemp targetTemp 2
+
+s inflow Mode 0
+s outflow Mode 1
+
+s inflow PressureExternal inflowPressure 
+s outflow PressureExternal outflowPressure 
+
+s inflow On 1
+s outflow On 1
+
+s cooler Setting 0
+s heater Setting 0
+
+run:
+
+l currentTemp gasSensor Temperature
+l currentPressure gasSensor Pressure
+
+ble currentTemp minTemp heat
+
+bge currentTemp maxTemp cool
+
+j none
+
+heat:
+s heater Setting 1
+s cooler Setting 0
+
+move minTemp targetTemp
+
+j end
+
+cool:
+
+s heater Setting 0
+s cooler Setting 1
+
+move maxTemp targetTemp
+
+j end
+
+none:
+s heater Setting 0
+s cooler Setting 0
+sub minTemp targetTemp 2
+add maxTemp targetTemp 2
+
+end:
+yield
+j run

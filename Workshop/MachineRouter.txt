@@ -1,0 +1,44 @@
+alias machineMem d0
+alias sorter1 d1
+alias sorter2 d2
+alias sorter3 d3
+alias sorter4 d4
+
+alias type r0
+
+s sorter1 Mode 2
+s sorter2 Mode 2
+s sorter3 Mode 2
+s sorter4 Mode 2
+
+start:
+yield
+l type machineMem Setting
+beq type -641491515 machine1
+beq type 336213101 machine2
+beq type 1307165496 machine3
+beq type -465741100 machine4
+beq type -1888248335 machine5
+j start
+machine1:
+s sorter1 Output 1
+s sorter2 Output 1
+s sorter3 Output 0
+j start
+machine2:
+s sorter1 Output 1
+s sorter2 Output 1
+s sorter3 Output 1
+j start
+machine3:
+s sorter1 Output 1
+s sorter2 Output 0
+j start
+machine4:
+s sorter1 Output 0
+s sorter2 Output 1
+j start
+machine5:
+s sorter1 Output 0
+s sorter4 Output 0
+j start

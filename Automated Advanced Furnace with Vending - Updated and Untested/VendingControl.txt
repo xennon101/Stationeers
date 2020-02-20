@@ -1,0 +1,44 @@
+alias hashSource d0
+alias vending1 d1
+alias vending2 d2
+alias vending3 d3
+alias vending4 d4
+alias vending5 d5
+
+alias machineRef r0
+alias hash r1
+alias initialExport r2
+alias newExport r3
+
+reset:
+move machineRef 1
+brdns dr0 2
+s dr0 ClearMemory 1
+add machineRef machineRef 1
+brle machineRef 5 -3
+
+waitActive:
+yield
+l hash hashSource Setting
+beqz hash waitActive
+
+move machineRef 1
+beq machineRef 6 fail
+brdns dr0 5
+l initialExport dr0 ExportCount
+s dr0 RequestHash hash
+sleep 2
+l newExport dr0 ExportCount
+add machineRef machineRef 1
+breq initialExport newExport -7
+
+s db Setting 1
+yield
+s db Setting 0
+j reset
+
+fail:
+s db Setting -1
+yield
+s db Setting 0
+j reset

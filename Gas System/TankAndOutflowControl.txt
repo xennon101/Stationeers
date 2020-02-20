@@ -1,0 +1,64 @@
+https://stationeering.com/tools/ic/_JAm9cWdTmH
+
+alias tank1 d0
+alias tank2 d1
+alias pipeAnalyser d2
+
+alias filter1 d3
+alias filter2 d4
+alias outflow d5
+
+alias pressureLimit r0
+alias tank1Pressure r1
+alias tank2Pressure r2
+alias pipePressure r3
+
+alias pressuriseStatus r4
+
+move pressureLimit 50000
+
+s outflow On 1
+
+run:
+l tank1Pressure tank1 Pressure
+l tank2Pressure tank2 Pressure
+l pipePressure pipeAnalyser Pressure
+
+l pressuriseStatus filter1 On
+
+breq pressuriseStatus 0 2
+move pressureLimit 50000
+breq pressuriseStatus 1 2
+move pressureLimit 30000
+
+brlt tank1Pressure pressureLimit 2
+s filter1 On 0
+brge tank1Pressure pressureLimit 2
+s filter1 On 1
+
+l pressuriseStatus filter2 On
+
+breq pressuriseStatus 0 2
+move pressureLimit 50000
+breq pressuriseStatus 1 2
+move pressureLimit 30000
+
+brlt tank2Pressure pressureLimit 2
+s filter2 On 0
+brge tank2Pressure pressureLimit 2
+s filter2 On 1
+
+l pressuriseStatus outflow Mode
+
+breq pressuriseStatus 0 2
+move pressureLimit 50000
+breq pressuriseStatus 1 2
+move pressureLimit 30000
+
+brlt pipePressure pressureLimit 2
+s outflow Mode 0
+brge pipePressure pressureLimit 2
+s outflow Mode 1
+
+yield
+j run

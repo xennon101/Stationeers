@@ -1,0 +1,120 @@
+alias mainControl d0
+alias typeTemp d1
+alias quantityPressure d2
+alias quantityDial d3
+alias type r0
+alias quantity r1
+
+waitActive:
+yield
+l type mainControl Setting
+l quantity quantityDial Setting
+beq type 0 waitActive #Select ore when provide type
+
+beq type 8 constantan #choose alloy or normal ore
+beq type 9 electrum
+beq type 10 invar
+beq type 11 solder
+beq type 12 steel
+beq type 13 astroloy
+beq type 14 hastelloy
+beq type 15 inconel
+beq type 16 stellite
+beq type 17 waspaloy
+
+push type
+push quantity
+j startOre
+constantan: #All alloy push combo of ores to stack
+push 1
+push quantity
+push 5
+push quantity
+j startOre
+electrum:
+push 7
+push quantity
+push 2
+push quantity
+j startOre
+invar:
+push 3
+push quantity
+push 5
+push quantity
+j startOre
+solder:
+push 4
+push quantity
+push 3
+push quantity
+j startOre
+steel:
+push 8
+push quantity
+mul quantity 3 quantity
+push 3
+push quantity
+j startOre
+astroloy:
+push 1
+push quantity
+push 10
+push quantity
+mul quantity 2 quantity
+push 3
+push quantity
+j startOre
+hastelloy:
+push 7
+push quantity
+push 10
+push quantity
+mul quantity 2 quantity
+push 5
+push quantity
+j startOre
+inconel:
+push 3
+push quantity
+push 2
+push quantity
+mul quantity 2 quantity
+push 5
+push quantity
+j startOre
+stellite:
+push 7
+push quantity
+push 6
+push quantity
+mul quantity 2 quantity
+push 10
+push quantity
+j startOre
+waspaloy:
+push 7
+push quantity
+push 4
+push quantity
+mul quantity 2 quantity
+push 5
+push quantity
+startOre:
+beq sp 0 end #When the stack is empty, end
+pop quantity #Pop the current ore off the stack
+pop type
+s typeTemp Setting type #Push ore type/quan to mem
+s quantityPressure Setting quantity
+waitOre:
+l quantity quantityPressure Setting
+l type typeTemp Setting 
+beq quantity 0 startOre #Quan=0, move to next ore
+beq type -1 waitActive #Mem=-1 for failure
+yield
+j waitOre
+
+end:
+s typeTemp Setting 50 #End signal
+yield
+j waitActive

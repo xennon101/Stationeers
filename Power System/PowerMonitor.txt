@@ -1,0 +1,110 @@
+https://stationeering.com/tools/ic/_Hp98KUqjuZ
+
+
+alias internalAnalyzer d0
+alias externalAnalyzer d1
+alias allBatteryCapacity d2
+
+alias powerProductionLED d3
+alias actualRequiredLED d4
+alias potentialPercentageLED d5
+
+alias internalActual r0
+
+alias externalActual r1
+alias externalPotential r2
+alias externalRequired r3
+
+alias batteryPercentage r4
+
+alias timer r5
+alias mode r6
+
+move timer 0
+move mode 0
+
+s powerProductionLED On 1
+s actualRequiredLED On 1
+s potentialPercentageLED On 1
+
+s powerProductionLED Mode 2
+s actualRequiredLED Mode 2
+
+s powerProductionLED Color 2
+s actualRequiredLED Color 2
+s potentialPercentageLED Color 2
+
+run:
+l internalActual internalAnalyzer PowerActual
+
+l externalActual externalAnalyzer PowerActual
+l externalPotential externalAnalyzer PowerPotential
+l externalRequired externalAnalyzer PowerRequired
+
+l batteryPercentage allBatteryCapacity Setting
+
+s powerProductionLED Setting internalActual
+
+brgt externalRequired internalActual 2
+s powerProductionLED Color 2 #Set Green
+
+brne externalRequired internalActual 2
+s powerProductionLED Color 5 #Set Yellow
+
+brle externalRequired internalActual 2
+s powerProductionLED Color 4 #Set Red
+
+brgt externalRequired externalActual 2
+s actualRequiredLED Color 2 #Set Green
+
+brne externalRequired externalActual 2
+s actualRequiredLED Color 2 #Set Green
+
+brle externalRequired externalActual 2
+s actualRequiredLED Color 4 #Set Red
+
+beq mode 0 mode0
+j mode1
+
+mode0:
+
+s actualRequiredLED Setting externalActual
+s potentialPercentageLED Mode 2
+s potentialPercentageLED Setting externalPotential
+
+add timer timer 1
+
+brne timer 10 2
+move mode 1
+
+yield
+j run
+
+mode1:
+
+s actualRequiredLED Setting externalRequired
+s potentialPercentageLED Mode 1
+s potentialPercentageLED Setting batteryPercentage
+
+bge batteryPercentage 0.50 green
+
+bge batteryPercentage 0.20 yellow
+
+s potentialPercentageLED Color 4 #Set Red
+j end
+
+green:
+s potentialPercentageLED Color 2 #Set Green
+j end
+
+yellow:
+s potentialPercentageLED Color 5 #Set Yellow
+
+end:
+sub timer timer 1
+
+brne timer 0 2
+move mode 0
+
+yield
+j run

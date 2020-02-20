@@ -1,0 +1,64 @@
+alias type d0
+alias quantity d1
+alias chute1 d2
+alias chute2 d3
+
+alias slotOccupied r0
+alias typeStore r1
+alias quantityStore r2
+
+s chute1 Lock 1
+s chute2 Lock 1
+
+
+waitActive:
+yield
+l typeStore type Setting
+
+#Select ore based on type
+beq typeStore 9 startOre1
+beq typeStore 10 startOre2
+
+
+j waitActive
+
+#Based on ore selection, set the chute to work with
+startOre1:
+alias currentChute d2
+j startOre
+startOre2:
+alias currentChute d3
+
+startOre:
+l quantityStore quantity Setting
+
+#Keep going until quantity hits 0
+beq quantityStore 0 waitActive
+
+loopOre:
+
+ls slotOccupied currentChute 0 Occupied
+
+beq slotOccupied 0 fail  #If the slot isn't occupied and we still have quantity to go, fail.
+
+#Cycle one ore out of the chute
+s currentChute Open 1
+s currentChute Open 0
+s currentChute Lock 1
+
+sub quantityStore quantityStore 1
+
+s quantity Setting quantityStore
+
+#Delay needed to stop multiple ore dropping
+sleep 1
+beq quantityStore 0 waitActive
+
+yield
+
+j loopOre
+
+fail:
+s type Setting -1
+
+j waitActive

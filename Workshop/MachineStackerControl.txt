@@ -1,0 +1,61 @@
+alias machine1 d0
+alias stacker1 d1
+alias machine2 d2
+alias stacker2 d3
+alias machine3 d4
+alias stacker3 d5
+
+alias currentReagents r0
+alias currentExport r1
+alias currentImport r2
+
+s machine1 ClearMemory 1
+s machine2 ClearMemory 1
+brdns machine3 2
+s machine3 ClearMemory 1
+
+s stacker1 ClearMemory 1
+s stacker2 ClearMemory 1
+brdns stacker3 2
+s stacker3 ClearMemory 1
+
+s stacker1 Setting 500
+s stacker2 Setting 500
+brdns stacker3 2
+s stacker3 Setting 500
+
+start:
+yield
+alias currentMachine d0
+alias currentStacker d1
+l currentReagents currentMachine Reagents
+bgtzal currentReagents running
+beqzal currentReagents notRunning
+alias currentMachine d2
+alias currentStacker d3
+l currentReagents currentMachine Reagents
+bgtzal currentReagents running
+beqzal currentReagents notRunning
+bdns machine3 start
+bdns stacker3 start
+alias currentMachine d4
+alias currentStacker d5
+l currentReagents currentMachine Reagents
+bgtzal currentReagents running
+beqzal currentReagents notRunning
+j start
+
+running:
+s currentMachine Activate 1
+j ra
+
+notRunning:
+yield
+l currentExport currentMachine ExportCount
+l currentImport currentStacker ImportCount
+brne currentExport currentImport 5
+sleep 1
+s currentStacker Activate 1
+s currentMachine ClearMemory 1
+s currentStacker ClearMemory 1
+j ra

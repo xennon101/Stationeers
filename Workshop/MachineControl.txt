@@ -1,0 +1,106 @@
+alias machine d0
+alias activateButton d1
+alias quantityDial d2
+alias machineMem d3
+alias typeMem d4
+alias quantityMem d5
+alias ID r0
+alias recipe r1
+alias activate r2
+alias quantity r3
+alias type r4
+alias completion r5
+l ID machine PrefabHash
+start:
+push -404336834
+push 226410516
+push -1301215609
+push 2134647745
+push -1406385572
+push -290196476
+push -929742000
+push 412924554
+push 1058547521
+push 502280180
+push 1579842814
+push -787796599
+push -297990285
+push -82508479
+push -654790771
+push -1897868623
+push 156348098
+waitActive:
+yield
+l activate activateButton Setting
+l completion machine CompletionRatio
+bgt completion 2 waitActive
+beq activate 0 waitActive
+s machine Open 1
+s machine ClearMemory 1
+s machineMem Setting ID
+l quantity quantityDial Setting
+lr recipe machine Recipe Copper
+jal writeRecipe
+lr recipe machine Recipe Gold
+jal writeRecipe
+lr recipe machine Recipe Iron
+jal writeRecipe
+lr recipe machine Recipe Lead
+jal writeRecipe
+lr recipe machine Recipe Nickel
+jal writeRecipe
+lr recipe machine Recipe Silicon
+jal writeRecipe
+lr recipe machine Recipe Silver
+jal writeRecipe
+lr recipe machine Recipe Astroloy
+jal writeRecipe
+lr recipe machine Recipe Constantan
+jal writeRecipe
+lr recipe machine Recipe Electrum
+jal writeRecipe
+lr recipe machine Recipe Hastelloy
+jal writeRecipe
+lr recipe machine Recipe Inconel
+jal writeRecipe
+lr recipe machine Recipe Invar
+jal writeRecipe
+lr recipe machine Recipe Solder
+jal writeRecipe
+lr recipe machine Recipe Steel
+jal writeRecipe
+lr recipe machine Recipe Stellite
+jal writeRecipe
+lr recipe machine Recipe Waspaloy
+jal writeRecipe
+popStack:
+beq sp 17 end
+pop quantity
+sub sp sp 16
+pop type
+add sp sp 17
+beq quantity 0 popStack
+s typeMem Setting type
+s quantityMem Setting quantity
+loopStack:
+yield
+s machine Open 0
+l type typeMem Setting
+beq type -1 error
+bne type 1 loopStack
+beq type 1 popStack
+error:
+sleep 5
+s machine Open 1
+end:
+yield
+l type typeMem Setting
+breq type -1 2
+bne type 1 end
+move sp 0
+s typeMem Setting 0
+j start
+writeRecipe:
+mul recipe recipe quantity
+push recipe
+j ra

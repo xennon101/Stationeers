@@ -1,0 +1,61 @@
+https://stationeering.com/tools/ic/_J4XFpeF1WF
+
+alias tank1 d0 
+alias tank2 d1 
+alias tank3 d2 
+
+alias filter1 d3 
+alias filter2 d4 
+alias filter3 d5 
+
+alias pressureLimit r0 
+alias tank1Pressure r1
+alias tank2Pressure r2
+alias tank3Pressure r3
+
+alias filterStatus r4
+
+run:
+l tank1Pressure tank1 Pressure
+l tank2Pressure tank2 Pressure
+l tank3Pressure tank3 Pressure
+
+l filterStatus filter1 On
+
+breq filterStatus 0 2
+move pressureLimit 50000
+breq filterStatus 1 2
+move pressureLimit 30000
+
+brlt tank1Pressure pressureLimit 2
+s filter1 On 0
+brge tank1Pressure pressureLimit 2
+s filter1 On 1
+
+l filterStatus filter2 On
+
+breq filterStatus 0 2
+move pressureLimit 50000
+breq filterStatus 1 2
+move pressureLimit 30000
+
+brlt tank2Pressure pressureLimit 2
+s filter2 On 0
+brge tank2Pressure pressureLimit 2
+s filter2 On 1
+
+l filterStatus filter3 On
+
+breq filterStatus 0 2
+move pressureLimit 50000
+breq filterStatus 1 2
+move pressureLimit 30000
+
+brlt tank3Pressure pressureLimit 2
+s filter3 On 0
+brge tank3Pressure pressureLimit 2
+s filter3 On 1
+
+yield
+j run
+

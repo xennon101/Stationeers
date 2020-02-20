@@ -1,0 +1,84 @@
+https://stationeering.com/tools/ic/_J9fAZBVzWj
+
+alias tank1 d0 
+alias tank2 d1 
+alias tank3 d2 
+
+alias filter1 d3 
+alias filter2 d4 
+alias mixer d5 
+
+alias pressureLimit r0 
+alias tank1Pressure r1
+alias tank2Pressure r2
+alias tank3Pressure r3
+
+alias tank1Temperature r4
+alias tank2Temperature r5
+alias filterStatus r6
+alias acceptableTempDelta r7
+alias tempDelta r8
+
+move acceptableTempDelta 3
+s mixer Setting 0.33
+
+run:
+l tank1Pressure tank1 Pressure
+l tank2Pressure tank2 Pressure
+l tank3Pressure tank3 Pressure
+l tank1Temperature tank1 Temperature
+l tank2Temperature tank2 Temperature
+
+l filterStatus filter1 On
+
+breq filterStatus 0 2
+move pressureLimit 50000
+breq filterStatus 1 2
+move pressureLimit 30000
+
+brlt tank1Pressure pressureLimit 2
+s filter1 On 0
+brge tank1Pressure pressureLimit 2
+s filter1 On 1
+
+l filterStatus filter2 On
+
+breq filterStatus 0 2
+move pressureLimit 50000
+breq filterStatus 1 2
+move pressureLimit 30000
+
+brlt tank2Pressure pressureLimit 2
+s filter2 On 0
+brge tank2Pressure pressureLimit 2
+s filter2 On 1
+
+l filterStatus mixer On
+
+breq filterStatus 0 2
+move pressureLimit 50000
+breq filterStatus 1 2
+move pressureLimit 30000
+
+blt tank3Pressure pressureLimit tempCheck
+bge tank3Pressure pressureLimit off
+
+off:
+s mixer On 0
+j end
+
+on:
+s mixer On 1
+j end
+
+tempCheck:
+sub tempDelta tank1Temperature tank2Temperature
+abs tempDelta tempDelta
+
+blt tempDelta acceptableTempDelta on
+j off
+
+
+end:
+yield
+j run

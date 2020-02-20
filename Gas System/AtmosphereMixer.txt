@@ -1,0 +1,75 @@
+https://stationeering.com/tools/ic/_J9sfX9PgBH
+
+alias tank1 d0 
+alias tank2 d1 
+alias tank3 d2 
+alias tank4 d3 
+
+alias mixer1 d4 
+alias mixer2 d5 
+
+alias pressureLimit r0 
+alias tank4Pressure r1
+
+
+alias tank1Temperature r2
+alias tank2Temperature r3
+alias tank3Temperature r4
+
+alias pressureStatus r5
+alias acceptableTempDelta r6
+alias tempDelta r7
+
+move acceptableTempDelta 3
+
+s mixer1 Setting .66
+s mixer2 Setting .7
+
+run:
+l tank4Pressure tank4 Pressure
+
+l tank1Temperature tank1 Temperature
+l tank2Temperature tank2 Temperature
+l tank3Temperature tank3 Temperature
+
+l pressureStatus mixer2 On
+
+breq pressureStatus 0 2
+move pressureLimit 50000
+breq pressureStatus 1 2
+move pressureLimit 30000
+
+blt tank4Pressure pressureLimit tempCheck
+bge tank4Pressure pressureLimit off
+
+off:
+s mixer1 On 0
+s mixer2 On 0
+j end
+
+on:
+s mixer1 On 1
+s mixer2 On 1
+j end
+
+tempCheck:
+sub tempDelta tank1Temperature tank2Temperature
+abs tempDelta tempDelta
+
+bgt tempDelta acceptableTempDelta off
+
+sub tempDelta tank1Temperature tank3Temperature
+abs tempDelta tempDelta
+
+bgt tempDelta acceptableTempDelta off
+
+sub tempDelta tank2Temperature tank3Temperature
+abs tempDelta tempDelta
+
+bgt tempDelta acceptableTempDelta off
+j on
+
+
+end:
+yield
+j run

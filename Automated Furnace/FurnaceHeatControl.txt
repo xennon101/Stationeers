@@ -1,0 +1,63 @@
+alias furnace d0
+alias tempMem d1
+alias pressureMem d2
+alias inflow d3
+alias outflow d4
+alias currentTemp r0
+alias currentPressure r1
+alias maxTemp r2
+alias maxPressure r3
+alias ticks r4
+
+s inflow Setting 5 #Limit the fuel volume pump to control heat better
+
+waitActive:
+yield
+s outflow Setting 100 #Fast outflow when we're just outgassing
+s inflow On 0
+l maxTemp tempMem Setting 
+l maxPressure pressureMem Setting 
+l currentPressure furnace Pressure
+
+bgt maxTemp 100 heat #If the memory is > 100 then we're in heating mode.
+
+# Ticks add a delay before the furnace starts to outgas, so it can be reused multiple times in quick succession
+add ticks 1 ticks
+
+brgt ticks 40 2
+s outflow On 0
+
+brlt ticks 40 5
+breq currentPressure 0 3
+s outflow On 1
+j waitActive
+s outflow On 0
+
+j waitActive
+
+heat:
+move ticks 0
+s outflow Setting 50 #Slow the outflow for better pressure regulation
+s furnace Activate 1
+yield
+s furnace Activate 0
+
+l maxTemp tempMem Setting 
+l currentTemp furnace Temperature
+l currentPressure furnace Pressure
+
+blt maxTemp 100 waitActive
+bgt currentPressure maxPressure vent #If pressure is too high, start outgassing
+s outflow On 0
+
+bgt currentTemp maxTemp stopFuel #If temp is too high, stop fuel
+s inflow On 1
+j heat
+
+vent:
+s outflow On 1
+j stopFuel #If we're venting, also stop fuel
+
+stopFuel:
+s inflow On 0
+j heat
